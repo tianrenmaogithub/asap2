@@ -1,2 +1,24 @@
-# asap2
-Amplicon sequencing of marker genes such as 16S rDNA, 18S rDNA, ITS and others has been widely used to survey and characterize microbial communities in countless ecological and environmental studies. However, the complex data analyses have required many interfering manual steps often leading to inconsistencies in results. Here, we have developed a pipeline, amplicon sequence analysis pipeline 2 (ASAP 2), to automate and glide through the processes without the usual manual inspections and user’s interference, for instance, in the detection of barcode orientation, selection of high-quality region of reads, and determination of resampling depth and many more. The pipeline integrates all the analytical processes such as importing data, demultiplexing, summarizing read profiles, trimming quality, denoising, removing chimeric sequences, and making the feature (ASV) table among others, using QIIME 2, Vegan and other tools. The pipeline accepts multiple file formats as input including multiplexed or demultiplexed, paired-end or single-end, barcode inside or outside and raw or intermediate data (e.g. feature table). The outputs include taxonomic classification, alpha/beta diversity, community composition, ordination analysis and statistical tests (variable selection, CCA, RDA, etc.). ASAP 2 supports merging multiple sequencing runs which helps integrate and compare data from different sources (public databases and collaborators). The pipeline minimizes hands-on interference and runs amplicon sequencing analysis automatically and consistently.
+We developed Amplicon Sequence Analysis Pipeline 2 (ASAP 2) to analyze marker gene amplicon sequence data automatically and consistently. It was designed to be us
+er-friendly and time-saving. Users just need to organize their fastq (demultiplexed or multiplexed, single-end or pair-end) or fasta (demultiplexed joined paired-
+end or single-end) and metadata properly. Multiple projects can be put together and the pipeline will automatically merge the data. People can even put their own
+data and data from collaborators or NCBI together to compare. Also, if you have intermediate files (feature table and representative sequence) from collaborators
+and you don't want to repeat the previous steps, just start from them.
+
+######### Dependency #########
+Please install the following packages.
+
+Python>=3.6
+QIIME2>=2020.6
+pandas>=0.25.3
+biopython>=1.77
+vegan>=2.5-6 # R package
+
+If you install QIIME 2 in a virtual environment, remember to activate it before running ASAP 2.
+
+######### Prepare data files and run #########
+Please prepare your sequence file and metadata according to the manual. Check once more the folder structure and naming according to the example data. Then put al
+l the project data in one folder (e.g. input/) and run the bin/asap2.py outside the folder.
+
+IMPORTANT: note that only projects using the same region (the same primer set, or regions with >80% overlap if you don't mind the bias resulted from primer amplif
+ication) can be put together and merged, or else, the phylogenetic tree will tell a quite different story.
+
