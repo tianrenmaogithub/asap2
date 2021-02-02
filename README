@@ -16,7 +16,7 @@ Please download classifier models and put them in lib/classifier/ before running
 https://docs.qiime2.org/2020.11/data-resources/
 
 ######### Download example data  #########
-Please download example data and unzip it in example/ and run bin/asap2.py to test and pipeline and the dependency.
+Please download example data and unzip it in example/ and run bin/asap2.py to test the pipeline and the dependency.
 https://drive.google.com/file/d/1LxGQ3Z4d1fcI31ppooTEzFUvGX318qwP/view?usp=sharing
 
 ######### Prepare data files and run #########
