@@ -1,0 +1,52 @@
+We developed Amplicon Sequence Analysis Pipeline 2 (ASAP 2) to analyze marker gene amplicon sequence data automatically and consistently. It was designed to be user-friendly and time-saving. Users just need to organize their fastq (demultiplexed or multiplexed, barcode inside or outside, single-end or pair-end) or and metadata properly. Multiple projects can be put together and the pipeline will automatically merge the data. People can even put their own data and data from collaborators or NCBI together to compare. Also, if you have intermediate files (feature table and representative sequence) from collaborators and you don't want to repeat the previous steps, just start from them.
+
+######### Dependency #########
+Please install the following packages.
+
+Python>=3.6
+QIIME2>=2020.6 
+pandas>=0.25.3
+biopython>=1.77
+vegan>=2.5-6 # R package
+
+If you install QIIME 2 in a virtual environment, remember to activate it before running ASAP 2.
+
+######### Download classifier model #########
+Please download classifier models and put them in asap2/lib/classifier/ (create the folder first). Please download the classifiers rather than the sequence data.
+https://docs.qiime2.org/2020.11/data-resources/
+
+######### Download example data  #########
+Please download example data and unzip it in asap2/example/ (create the folder first) 
+https://drive.google.com/file/d/1LxGQ3Z4d1fcI31ppooTEzFUvGX318qwP/view?usp=sharing
+and run
+
+cd asap2/example/
+python -u ../bin/asap2.py -i input -c xxx
+
+to test the pipeline and the dependencies.
+
+######### Prepare data files and run #########
+Please prepare your sequence file and metadata according to the manual. Check once more the folder structure and naming according to the example data. Then put all the project data in one folder (e.g. input/) and run the pipeline outside the data folder.
+
+IMPORTANT: note that only projects using the same region (the same primer set, or regions with >80% overlap if you don't mind the bias resulted from primer amplification) can be put together and merged, or else, the phylogenetic tree will tell a quite different story.
+
+######## View the result files #########
+The results include these folders:
+
+demultiplexed
+demuxSumViz
+diversity
+feature
+featureMerged
+imported
+ordination
+phylogeny
+readSummary
+taxonomy
+
+TXT files can be opened by notepad editor. TSV files can be opened by Excel. 
+QZA and QZV can be viewed using QIIME 2 View: https://view.qiime2.org/
+If you want to use the files inside QZA and QZV, simple run 'unzip xx.qza/v'.
+
+Please read the manual for the result explanation.
+
