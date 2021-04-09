@@ -11,6 +11,7 @@ parser.add_argument('-i','--inputdir',dest='indir',required=True,help='Directory
 parser.add_argument('-c',dest='clas',required=True,help='Classifier model for taxonomic classification. Download classifier models from https://docs.qiime2.org/2020.11/data-resources/ and put them in '+home+'/../lib/classifier/ if you haven\'t done it.',choices=os.listdir(home+'/../lib/classifier/'))
 parser.add_argument('-q','--qual',dest='qual',required=False,default=20,type=int,help='Quality score cutoff to trim the demultiplexed sequences, 10-40 [default: 20].')
 parser.add_argument('-g','--gap',dest='gap',required=False,default=0.2,type=float,help='Maximum percent of gap in a column in the alignment filtering for phylogenetic tree construction, 0-1 [default: 0.2].')
+parser.add_argument('-r','--resampling-depth',dest='resa',required=False,default=0,type=int,help='Resampling depth. Make it 0 if you want the pipeline to decide it [default: 0].')
 parser.add_argument('-s','--step',dest='step',required=False,default=30,type=int,help='Step number for alpha rarefaction curve, 10-100 [default: 30].')
 parser.add_argument('-t','--iteration',dest='iter',required=False,default=30,type=int,help='Iteration number for alpha rarefaction curve, 10-100 [default: 30].')
 parser.add_argument('-n','--confidence',dest='conf',required=False,default=0.7,type=float,help='Confidence cutoff of taxonomic classification, 0.5-1 [default: 0.7].')
@@ -102,7 +103,7 @@ call('qiime phylogeny align-to-tree-mafft-fasttree --i-sequences '+args.outdir+'
 
 # alpha beta diversity
 print('\n---Alpha and beta diversity and statistical tests---\n')
-sampleDepth=resampleDepth(args.outdir+'/readSummary/read_summary_merged.tsv')
+sampleDepth=resampleDepth(args.outdir+'/readSummary/read_summary_merged.tsv',args.resa)
 call('qiime diversity core-metrics-phylogenetic --i-phylogeny '+args.outdir+'/phylogeny/rooted-tree.qza --i-table '+args.outdir+'/featureMerged/merged-table.qza --p-sampling-depth '+str(sampleDepth)+' --m-metadata-file '+args.outdir+'/featureMerged/merged-metadata.tsv --output-dir '+args.outdir+'/diversity','Diversity analysis done successfully.','Diversity analysis failed.')
 call('mkdir '+args.outdir+'/diversity/alpha '+args.outdir+'/diversity/beta; mv '+args.outdir+'/diversity/*_vector.qza '+args.outdir+'/diversity/alpha; mv  '+args.outdir+'/diversity/*matrix.qza '+args.outdir+'/diversity/*results.qza '+args.outdir+'/diversity/*emperor.qzv '+args.outdir+'/diversity/beta','Alpha and Beta diversity results moved into alpha/ and beta/.','Failed to move Alpha and Beta diversity results in alpha/ and beta/.')
 alphaGroupSig(args.outdir+'/diversity/alpha/',args.outdir+'/featureMerged/merged-metadata.tsv')
