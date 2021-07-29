@@ -5,6 +5,7 @@ Please install the following packages.
 
 Python>=3.6
 QIIME2>=2020.6 
+scikit-learn==(Your classifier's scikit-learn version)
 pandas>=0.25.3
 biopython>=1.77
 vegan>=2.5-6 # R package
@@ -14,6 +15,7 @@ If you install QIIME 2 in a virtual environment, remember to activate it before 
 ######### Download classifier model #########
 Please download classifier models and put them in asap2/lib/classifier/ (create the folder first). Please download the classifiers rather than the sequence data.
 https://docs.qiime2.org/2020.11/data-resources/
+Make sure the same scikit-learn version as the classifier is installed.
 
 ######### Download example data  #########
 Please download example data and unzip it in asap2/example/ (create the folder first) 
