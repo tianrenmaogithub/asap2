@@ -54,3 +54,5 @@ If you want to use the files inside QZA and QZV, simple run 'unzip xx.qza/v'.
 
 Please read the manual for the result explanation.
 
+If you find our pipeline helpful, please cite our paper:
+Tian, R. Imanian, B. ASAP 2: A Pipeline and Web Server to Analyze Marker Gene Amplicon Sequencing Data Automatically and Consistently 2021
