@@ -1,0 +1,502 @@
++ rm -rf output2/
++ mkdir output2/
++ mkdir output2//imported
++ qiime tools import --type EMPPairedEndSequences --input-path input2//fqMuBoPe-project_emp1/seqData --output-path output2//imported/fqMuBoPe-project_emp1.qza
+Imported input2//fqMuBoPe-project_emp1/seqData as EMPPairedEndDirFmt to output2//imported/fqMuBoPe-project_emp1.qza
++ mkdir output2//demultiplexed
++ qiime demux emp-paired --i-seqs output2//imported/fqMuBoPe-project_emp1.qza --m-barcodes-file input2//fqMuBoPe-project_emp1/metadata.tsv --m-barcodes-column barcode-sequence --p-rev-comp-mapping-barcodes --o-per-sample-sequences output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza --o-error-correction-details output2//demultiplexed/fqMuBoPe-project_emp1-demux-details.qza
+Saved SampleData[PairedEndSequencesWithQuality] to: output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza
+Saved ErrorCorrectionDetails to: output2//demultiplexed/fqMuBoPe-project_emp1-demux-details.qza
++ mkdir output2//demuxSumViz
++ qiime demux summarize --i-data output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza --o-visualization output2//demuxSumViz/fqMuBoPe-project_emp1.qzv
+Saved Visualization to: output2//demuxSumViz/fqMuBoPe-project_emp1.qzv
++ mkdir output2//readSummary
++ mkdir output2//feature
++ qiime dada2 denoise-paired --i-demultiplexed-seqs output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza --p-trim-left-f 0 --p-trunc-len-f 151 --p-trim-left-r 0 --p-trunc-len-r 151 --p-n-threads 10 --o-representative-sequences output2//feature/fqMuBoPe-project_emp1-rep-seqs.qza --o-table output2//feature/fqMuBoPe-project_emp1-table.qza --o-denoising-stats output2//feature/fqMuBoPe-project_emp1-stats.qza
+Saved FeatureTable[Frequency] to: output2//feature/fqMuBoPe-project_emp1-table.qza
+Saved FeatureData[Sequence] to: output2//feature/fqMuBoPe-project_emp1-rep-seqs.qza
+Saved SampleData[DADA2Stats] to: output2//feature/fqMuBoPe-project_emp1-stats.qza
++ qiime metadata tabulate --m-input-file output2//feature/fqMuBoPe-project_emp1-stats.qza --o-visualization output2//feature/fqMuBoPe-project_emp1-stats.qzv
+Saved Visualization to: output2//feature/fqMuBoPe-project_emp1-stats.qzv
++ mkdir output2//featureMerged
++ qiime feature-table merge --i-tables output2//feature/fqMuBoPe-project_emp1-table.qza --o-merged-table output2//featureMerged/merged-table.qza --p-overlap-method sum
+Saved FeatureTable[Frequency] to: output2//featureMerged/merged-table.qza
++ qiime feature-table summarize --i-table output2//featureMerged/merged-table.qza --o-visualization output2//featureMerged/merged-table.qzv
+Saved Visualization to: output2//featureMerged/merged-table.qzv
++ qiime tools export --input-path output2//featureMerged/merged-table.qza --output-path output2//featureMerged
+Exported output2//featureMerged/merged-table.qza as BIOMV210DirFmt to directory output2//featureMerged
++ biom convert -i output2//featureMerged/feature-table.biom -o output2//featureMerged/feature-table.tsv --to-tsv
++ mv output2//featureMerged/feature-table.biom output2//featureMerged/merged-table.biom
++ mv output2//featureMerged/feature-table.tsv output2//featureMerged/merged-table.tsv
++ qiime feature-table merge-seqs --i-data output2//feature/fqMuBoPe-project_emp1-rep-seqs.qza --o-merged-data output2//featureMerged/merged-rep-seqs.qza
+Saved FeatureData[Sequence] to: output2//featureMerged/merged-rep-seqs.qza
++ qiime feature-table tabulate-seqs --i-data output2//featureMerged/merged-rep-seqs.qza --o-visualization output2//featureMerged/merged-rep-seqs.qzv
+Saved Visualization to: output2//featureMerged/merged-rep-seqs.qzv
++ qiime tools export --input-path output2//featureMerged/merged-rep-seqs.qza --output-path output2//featureMerged
+Exported output2//featureMerged/merged-rep-seqs.qza as DNASequencesDirectoryFormat to directory output2//featureMerged
++ mv output2//featureMerged/dna-sequences.fasta output2//featureMerged/merged-rep-seqs.fasta
++ mkdir output2//phylogeny
++ qiime phylogeny align-to-tree-mafft-fasttree --i-sequences output2//featureMerged/merged-rep-seqs.qza --o-alignment output2//phylogeny/aligned-rep-seqs.qza --o-masked-alignment output2//phylogeny/masked-aligned-rep-seqs.qza --o-tree output2//phylogeny/unrooted-tree.qza --o-rooted-tree output2//phylogeny/rooted-tree.qza --p-mask-max-gap-frequency 0.2 --p-n-threads 10
+Saved FeatureData[AlignedSequence] to: output2//phylogeny/aligned-rep-seqs.qza
+Saved FeatureData[AlignedSequence] to: output2//phylogeny/masked-aligned-rep-seqs.qza
+Saved Phylogeny[Unrooted] to: output2//phylogeny/unrooted-tree.qza
+Saved Phylogeny[Rooted] to: output2//phylogeny/rooted-tree.qza
++ qiime diversity core-metrics-phylogenetic --i-phylogeny output2//phylogeny/rooted-tree.qza --i-table output2//featureMerged/merged-table.qza --p-sampling-depth 270 --m-metadata-file output2//featureMerged/merged-metadata.tsv --output-dir output2//diversity
+Saved FeatureTable[Frequency] to: output2//diversity/rarefied_table.qza
+Saved SampleData[AlphaDiversity] to: output2//diversity/faith_pd_vector.qza
+Saved SampleData[AlphaDiversity] to: output2//diversity/observed_features_vector.qza
+Saved SampleData[AlphaDiversity] to: output2//diversity/shannon_vector.qza
+Saved SampleData[AlphaDiversity] to: output2//diversity/evenness_vector.qza
+Saved DistanceMatrix to: output2//diversity/unweighted_unifrac_distance_matrix.qza
+Saved DistanceMatrix to: output2//diversity/weighted_unifrac_distance_matrix.qza
+Saved DistanceMatrix to: output2//diversity/jaccard_distance_matrix.qza
+Saved DistanceMatrix to: output2//diversity/bray_curtis_distance_matrix.qza
+Saved PCoAResults to: output2//diversity/unweighted_unifrac_pcoa_results.qza
+Saved PCoAResults to: output2//diversity/weighted_unifrac_pcoa_results.qza
+Saved PCoAResults to: output2//diversity/jaccard_pcoa_results.qza
+Saved PCoAResults to: output2//diversity/bray_curtis_pcoa_results.qza
+Saved Visualization to: output2//diversity/unweighted_unifrac_emperor.qzv
+Saved Visualization to: output2//diversity/weighted_unifrac_emperor.qzv
+Saved Visualization to: output2//diversity/jaccard_emperor.qzv
+Saved Visualization to: output2//diversity/bray_curtis_emperor.qzv
++ mkdir output2//diversity/alpha output2//diversity/beta
++ mv output2//diversity/evenness_vector.qza output2//diversity/faith_pd_vector.qza output2//diversity/observed_features_vector.qza output2//diversity/shannon_vector.qza output2//diversity/alpha
++ mv output2//diversity/bray_curtis_distance_matrix.qza output2//diversity/jaccard_distance_matrix.qza output2//diversity/unweighted_unifrac_distance_matrix.qza output2//diversity/weighted_unifrac_distance_matrix.qza output2//diversity/bray_curtis_pcoa_results.qza output2//diversity/jaccard_pcoa_results.qza output2//diversity/unweighted_unifrac_pcoa_results.qza output2//diversity/weighted_unifrac_pcoa_results.qza output2//diversity/bray_curtis_emperor.qzv output2//diversity/jaccard_emperor.qzv output2//diversity/unweighted_unifrac_emperor.qzv output2//diversity/weighted_unifrac_emperor.qzv output2//diversity/beta
++ qiime diversity alpha-group-significance --i-alpha-diversity output2//diversity/alpha//shannon_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --o-visualization output2//diversity/alpha//shannon_ve-groupSignificance.qzv
+Saved Visualization to: output2//diversity/alpha//shannon_ve-groupSignificance.qzv
++ qiime diversity alpha-group-significance --i-alpha-diversity output2//diversity/alpha//faith_pd_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --o-visualization output2//diversity/alpha//faith_pd_v-groupSignificance.qzv
+Saved Visualization to: output2//diversity/alpha//faith_pd_v-groupSignificance.qzv
++ qiime diversity alpha-group-significance --i-alpha-diversity output2//diversity/alpha//evenness_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --o-visualization output2//diversity/alpha//evenness_v-groupSignificance.qzv
+Saved Visualization to: output2//diversity/alpha//evenness_v-groupSignificance.qzv
++ qiime diversity alpha-group-significance --i-alpha-diversity output2//diversity/alpha//observed_features_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --o-visualization output2//diversity/alpha//observed_f-groupSignificance.qzv
+Saved Visualization to: output2//diversity/alpha//observed_f-groupSignificance.qzv
++ qiime diversity alpha-correlation --i-alpha-diversity output2//diversity/alpha//shannon_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --p-intersect-ids --p-method spearman --o-visualization output2//diversity/alpha//shannon_ve-correlation.qzv
+Saved Visualization to: output2//diversity/alpha//shannon_ve-correlation.qzv
++ qiime diversity alpha-correlation --i-alpha-diversity output2//diversity/alpha//faith_pd_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --p-intersect-ids --p-method spearman --o-visualization output2//diversity/alpha//faith_pd_v-correlation.qzv
+Saved Visualization to: output2//diversity/alpha//faith_pd_v-correlation.qzv
++ qiime diversity alpha-correlation --i-alpha-diversity output2//diversity/alpha//evenness_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --p-intersect-ids --p-method spearman --o-visualization output2//diversity/alpha//evenness_v-correlation.qzv
+Saved Visualization to: output2//diversity/alpha//evenness_v-correlation.qzv
++ qiime diversity alpha-correlation --i-alpha-diversity output2//diversity/alpha//observed_features_vector.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --p-intersect-ids --p-method spearman --o-visualization output2//diversity/alpha//observed_f-correlation.qzv
+Saved Visualization to: output2//diversity/alpha//observed_f-correlation.qzv
++ qiime diversity alpha-rarefaction --i-table output2//featureMerged/merged-table.qza --i-phylogeny output2//phylogeny/rooted-tree.qza --p-max-depth 323 --o-visualization output2//diversity/alpha/alpha-rarefaction.qzv --p-steps 30 --p-iterations 30
+Saved Visualization to: output2//diversity/alpha/alpha-rarefaction.qzv
++ qiime tools export --input-path output2//diversity/rarefied_table.qza --output-path output2//featureMerged
+Exported output2//diversity/rarefied_table.qza as BIOMV210DirFmt to directory output2//featureMerged
++ biom convert -i output2//featureMerged/feature-table.biom -o output2//featureMerged/feature-table.tsv --to-tsv
++ mv output2//featureMerged/feature-table.biom output2//featureMerged/merged-table-rarefied.biom
++ mv output2//featureMerged/feature-table.tsv output2//featureMerged/merged-table-rarefied.tsv
++ mkdir output2//taxonomy
++ qiime feature-classifier classify-sklearn --i-classifier /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/classifier/silva-138-99-nb-classifier.qza --i-reads output2//featureMerged/merged-rep-seqs.qza --o-classification output2//taxonomy/classification.qza --p-confidence 0.7 --p-n-jobs 10
+Saved FeatureData[Taxonomy] to: output2//taxonomy/classification.qza
++ qiime metadata tabulate --m-input-file output2//taxonomy/classification.qza --o-visualization output2//taxonomy/classification.qzv
+Saved Visualization to: output2//taxonomy/classification.qzv
++ qiime taxa barplot --i-table output2//featureMerged/merged-table.qza --i-taxonomy output2//taxonomy/classification.qza --m-metadata-file output2//featureMerged/merged-metadata.tsv --o-visualization output2//taxonomy/taxa-bar-plots.qzv
+Saved Visualization to: output2//taxonomy/taxa-bar-plots.qzv
++ mkdir output2//ordination
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L4.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L4.txt output2//ordination/RDA-L4.pdf output2//ordination/CCA-L4.txt output2//ordination/CCA-L4.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1] 40 72
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1] 40 72
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L5.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L5.txt output2//ordination/RDA-L5.pdf output2//ordination/CCA-L5.txt output2//ordination/CCA-L5.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1] 40 89
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1] 40 89
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L2.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L2.txt output2//ordination/RDA-L2.pdf output2//ordination/CCA-L2.txt output2//ordination/CCA-L2.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1] 40 15
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1] 40 15
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L7.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L7.txt output2//ordination/RDA-L7.pdf output2//ordination/CCA-L7.txt output2//ordination/CCA-L7.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1]  40 154
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1]  40 154
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L3.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L3.txt output2//ordination/RDA-L3.pdf output2//ordination/CCA-L3.txt output2//ordination/CCA-L3.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1] 40 39
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1] 40 39
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
++ Rscript /media/Data_1/tianrm/scripts/pipelines/asap2/2.2/bin/../lib/ordination.r output2//ordination/tax-L6.tsv output2//featureMerged/merged-metadata.tsv output2//ordination/RDA-L6.txt output2//ordination/RDA-L6.pdf output2//ordination/CCA-L6.txt output2//ordination/CCA-L6.pdf output2//ordination/log.txt
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.5-7
+Warning message:
+package ‘lattice’ was built under R version 4.0.3 
+[1] "# samples    # species"
+[1]  40 122
+[1] "Removing rows and columns with NA"
+[1] "Removing all-zero columns and rows"
+[1] "# samples    # species"
+[1]  40 122
+[1] "# samples    # env"
+[1] 40 20
+[1] "Removing rows and columns with NA"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing env columns with only one level"
+[1] "# samples    # env"
+[1] 40 11
+[1] "Removing non-shared samples"
+[1] "# Intersection samples:  40"
+null device 
+          1 
+null device 
+          1 
+
+---Checking the input directory for data format---
+
+Checking directory fqMuBoPe-project_emp1
+All files required were found in input2//fqMuBoPe-project_emp1
+All files required were found in input2//fqMuBoPe-project_emp1/seqData
+
+output2/ created.
+
+
+Output will be put in output2/
+
+
+---Importing data from input2//---
+
+
+output2//imported/ created.
+
+Importing data fqMuBoPe-project_emp1
+
+input2//fqMuBoPe-project_emp1 imported successfully.
+
+
+---Demultiplexing data---
+
+
+output2//demultiplexed/ created.
+
+
+Demultiplexing output2//imported/fqMuBoPe-project_emp1.qza
+Checking barcode direction in metadata file and barcode file.
+Checking orientation of 10 barcodes ...
+Barcodes that are the same in the barcode file and matadata file.
+Barcodes: 
+#: 0
+
+Barcodes that are the reverse complement in the barcode file and matadata file.
+Barcodes: GAAACTCCTAGA TCAGACCAACTG GTTGGTTGGCAT AACCTCGGATAA ACGTAACCACGT TTCCACACGTGG AAGATCGTACTG ATCGGGCTTAAC CTGGTGCTGAAT TCCTAGGTCCGA
+#: 10
+
+The orientation of barcodes in the barcode file and the metadata file are reverse complement.
+
+Demultiplexing output2//imported/fqMuBoPe-project_emp1.qza done successfully.
+
+
+---Summarising demultiplexed qza---
+
+
+output2//demuxSumViz/ created.
+
+Summarising fqMuBoPe-project_emp1-demux.qza
+
+Summarising output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza done successfully.
+
+
+output2//readSummary created.
+
+Summarising read number after demultiplexing of all projects based on output2//demuxSumViz
+
+fqMuBoPe-project_emp1:
+# sample: 40
+Max read: 1442
+Min read: 439
+Median read: 935.0
+Mean read: 946
+
+Results saved to output2//readSummary/read_summary_demux.tsv
+
+---Quality trimming, denoise, chrimeric, abundance---
+
+
+output2//feature/ created.
+
+Processing output2//demultiplexed/fqMuBoPe-project_emp1-demux.qza
+Parsing output2//demultiplexed/../demuxSumViz/fqMuBoPe-project_emp1.qzv
+Will trim sequences at 0 bp and 151 bp and remove other regions with moving average of median quality score < 20
+Please ensure there will be at least 12 bp overlap after trimming for paired-end sequence data
+Parsing output2//demultiplexed/../demuxSumViz/fqMuBoPe-project_emp1.qzv
+Will trim sequences at 0 bp and 151 bp and remove other regions with moving average of median quality score < 20
+Please ensure there will be at least 12 bp overlap after trimming for paired-end sequence data
+
+Abundance results saved in output2//feature.
+
+Summarising read number after denoising of all projects based on output2//feature
+
+Tabulating output2//feature/fqMuBoPe-project_emp1-stats.qza done successfully.
+
+Results saved to output2//readSummary/read_summary_denoise.tsv
+
+---Converting input feature table data to qza---
+
+Converting input feature table to qza
+
+---Merging multiple projects---
+
+
+output2//featureMerged created.
+
+Merging ['fqMuBoPe-project_emp1-table.qza']to output2//featureMerged
+
+['fqMuBoPe-project_emp1-table.qza'] from output2//feature/ were merged to output2//featureMerged/merged-table.qza
+
+
+Summarizing merged table done successfully.
+
+
+Exporting merged table done successfully.
+
+
+Converting biom to tsv done successfully.
+
+
+Renaming to merged-table.biom and merged-table.tsv done successfully.
+
+Merging ['fqMuBoPe-project_emp1-rep-seqs.qza']to output2//featureMerged
+
+['fqMuBoPe-project_emp1-rep-seqs.qza'] from output2//feature/ were merged to output2//featureMerged/merged-rep-seqs.qza
+
+
+Summarizing merged rep-seqs done successfully.
+
+
+Exporting merged rep-seqs done successfully.
+
+
+Renaming to merged-table.biom and merged-table.tsv done successfully.
+
+
+---Merging multiple metadata---
+
+Merged metadata saved to output2//featureMerged/merged-metadata.tsv
+
+---Constructing phylogenetic tree---
+
+
+output2//phylogeny created.
+
+
+Phylogenetic tree saved.
+
+
+---Alpha and beta diversity and statistical tests---
+
+Estimating the optimal resampling depth yielding the maximum observation (# samples and # features)
+# sample: 41
+Max read: 589
+Min read: 0
+Median read: 314.0
+Mean read: 341
+Resampling depth: 270
+# sample left: 33
+
+
+Diversity analysis done successfully.
+
+
+Alpha and Beta diversity results moved into alpha/ and beta/.
+
+Conducting group significance test using categorial factors for alpha diversity results in output2//diversity/alpha/
+
+shannon_vector.qza done successfully.
+
+
+faith_pd_vector.qza done successfully.
+
+
+evenness_vector.qza done successfully.
+
+
+observed_features_vector.qza done successfully.
+
+Conducting correlation test using continuous factors for alpha diversity results in output2//diversity/alpha/
+
+shannon_vector.qza done successfully.
+
+
+faith_pd_vector.qza done successfully.
+
+
+evenness_vector.qza done successfully.
+
+
+observed_features_vector.qza done successfully.
+
+
+---Alpha rarefaction---
+
+
+Alpha rarefaction done successfully.
+
+
+Rarefied feature table exported to output2//featureMerged/feature-table.biom
+
+
+Converting to tsv done successfully.
+
+
+Renaming to merged-table-rarefied.biom and merged-table-rarefied.tsv done successfully.
+
+
+---Taxonomic classification and visualization---
+
+
+output2//taxonomy created.
+
+Conducting taxonomic classification
+
+Classification done successfully.
+
+Converting to classification.qzv
+
+Conversion done successfully.
+
+
+Bar plot generated.
+
+
+---Ordination analysis: CCA, RDA and variable selection---
+
+
+output2//ordination created.
+
+Extracting taxonomy data.
+output2//ordination/tax-L1.tsv saved.
+output2//ordination/tax-L2.tsv saved.
+output2//ordination/tax-L3.tsv saved.
+output2//ordination/tax-L4.tsv saved.
+output2//ordination/tax-L5.tsv saved.
+output2//ordination/tax-L6.tsv saved.
+output2//ordination/tax-L7.tsv saved.
+Conducting ordination analysis.
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L4.tsv
+
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L5.tsv
+
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L2.tsv
+
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L7.tsv
+
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L3.tsv
+
+
+Ordination analysis RDA, CCA and ordistep tests finished for tax-L6.tsv
+
+
+All the processes have been finished successfully. Enjoy it!

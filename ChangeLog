@@ -1,0 +1,4 @@
+5/2021 Adding an option to allow users to specify a customized resampling depth for the
+rarefaction in the alpha and beta diversity analysis.
+10/2021 Changing the workflow to use the raw feature table rather than the
+rarefied one for the community composition and ordination analysis.
