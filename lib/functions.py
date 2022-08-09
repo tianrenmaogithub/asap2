@@ -362,6 +362,7 @@ def resampleDepth(infile,resa):
     # This function return resampling depth yielding the maximum observation
     print('Estimating the optimal resampling depth yielding the maximum observation (# samples and # features)')
     r=[round(float(i.strip().split(',')[1])) for i in open(infile,'r').readlines()]
+    r=r[1:]
     r.sort()
     print('# sample: '+str(len(r))+'\nMax read: '+str(np.max(r))+'\nMin read: '+str(np.min(r))+'\nMedian read: '+str(np.median(r))+'\nMean read: '+str(round(np.mean(r))))
     if resa != 0:
