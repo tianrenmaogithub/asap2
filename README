@@ -20,7 +20,7 @@ Replace xxxx.xx with your QIIME version. For example, 2021.4
 If you download classifier from other place (e.g. QIIME forum), make sure the version of scikit-learn is the same as what you have installed for QIIME 2.
 
 ######### Download example data  #########
-Please download the example data (https://hts.iit.edu/static/files/input.zip) and unzip it in asap2/example/ (create the folder first) and run
+Please download the example data (https://zenodo.org/records/10697843/files/input.zip) and unzip it in asap2/example/ (create the folder first) and run
 
 cd asap2/example/
 python -u ../bin/asap2.py -i input -c xxx
@@ -29,7 +29,7 @@ to test the pipeline and the dependencies.
 
 ######### Prepare data files and run #########
 Please prepare your sequence file and metadata according to the manual. 
-Important: It is efficient to download a test data as a template for your data preparation. You can download our test data set (https://hts.iit.edu/static/files/input.zip), including metadata files,sequence files and file organization of all data formats, for reference. 
+Important: It is efficient to download a test data as a template for your data preparation. You can download our test data set (https://zenodo.org/records/10697843/files/input.zip), including metadata files,sequence files and file organization of all data formats, for reference. 
 Check once more the folder structure and naming according to the example data. Then put all the project data in one folder (e.g. input/) and run the pipeline outside the data folder.
 
 IMPORTANT: note that only projects using the same region (the same primer set, or regions with >80% overlap if you don't mind the bias resulted from primer amplification) can be put together and merged, or else, the phylogenetic tree will tell a quite different story.
