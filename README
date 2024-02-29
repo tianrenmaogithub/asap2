@@ -6,7 +6,7 @@ We developed Amplicon Sequence Analysis Pipeline 2 (ASAP 2) to analyze marker ge
 Please install the following packages.
 
 Python>=3.6
-QIIME2==2020.6 
+QIIME2>=2020.6 
 pandas>=0.25.3
 biopython>=1.77
 vegan>=2.5-6 # R package
