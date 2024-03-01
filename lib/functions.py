@@ -231,7 +231,7 @@ def getRegion(l):
             l2.append(n)
             n=0
     l2=np.array(l2)
-    return([l2.argmax()-l2.max(),l2.argmax()])
+    return([l2.argmax()-l2.max(),l2.argmax()-15])
 
 def getGoodRegion(inQzv,o='forward',q=20):
     print('Parsing '+inQzv)
