@@ -5,11 +5,13 @@ import argparse
 home=os.path.dirname(os.path.realpath(__file__))
 exec(open(home+'/../lib/functions.py','r').read())
 
-parser=argparse.ArgumentParser(prog='ASAP', description='This program wraps all the process of QIIME 2 including  importing data, demultiplexing, denoise, dereplicate, ASV, classification, ploting, diversity analysis (alpha, beta) etc. It accepts many data type, including multiplexed and demultiplexed, single-end and paired-end, barcode inside and barcode outside, read data and feature data. For a better view of log, please use \'python -u\' to run this script.') 
+parser=argparse.ArgumentParser(prog='ASAP', description='This program wraps all the process of QIIME 2 including  importing data, demultiplexing, denoise, dereplicate, ASV / OTU, classification, ploting, diversity analysis (alpha, beta) etc. It accepts many data type, including multiplexed and demultiplexed, single-end and paired-end, barcode inside and barcode outside, read data and feature data. For a better view of log, please use \'python -u\' to run this script.') 
 parser.add_argument('-v','--version', action='version', version='%(prog)s 2.2')
 parser.add_argument('-i','--inputdir',dest='indir',required=True,help='Directory of the input data. See the manual for preparation of input data.')
 parser.add_argument('-c',dest='clas',required=True,help='Classifier model for taxonomic classification. Download classifier models from https://docs.qiime2.org/2020.11/data-resources/ and put them in '+home+'/../lib/classifier/ if you haven\'t done it.',choices=os.listdir(home+'/../lib/classifier/'))
-parser.add_argument('-q','--qual',dest='qual',required=False,default=20,type=int,help='Quality score cutoff to trim the demultiplexed sequences, 10-40 [default: 20].')
+parser.add_argument('-q','--qual',dest='qual',required=False,default=20,type=int,help='Quality score cutoff in determining the good region of sequence before denoising, 10-40. If too many reads filtered in denoising, use a higher quality score like 25 [default: 20].')
+parser.add_argument('-m','--method',dest='meth',required=False,default='ASV',choices=['ASV', 'OTU'],help='Method of sequence clustering [default: ASV].')
+parser.add_argument('-id','--identity',dest='iden',required=False,default=0.97,type=int,help='Identity cutoff for clustering if OTU clustering is selected [default: 0.97]')
 parser.add_argument('-g','--gap',dest='gap',required=False,default=0.2,type=float,help='Maximum percent of gap in a column in the alignment filtering for phylogenetic tree construction, 0-1 [default: 0.2].')
 parser.add_argument('-r','--resampling-depth',dest='resa',required=False,default=0,type=int,help='Resampling depth. Make it 0 if you want the pipeline to decide it [default: 0].')
 parser.add_argument('-s','--step',dest='step',required=False,default=30,type=int,help='Step number for alpha rarefaction curve, 10-100 [default: 30].')
@@ -69,27 +71,35 @@ demuxSumViz(args.outdir+'/demultiplexed',args.outdir+'/demuxSumViz')
 call('mkdir '+args.outdir+'/readSummary',args.outdir+'/readSummary created.','Error: fail to create '+args.outdir+'/readSummary.')
 readProfileDemux(args.outdir+'/demuxSumViz',args.outdir+'/readSummary/read_summary_demux.tsv')
 
+if args.meth == 'ASV':
+    # quality trimming, denoise, chrimeric, abundance
+    print('\n---Quality trimming, denoise, chrimeric, abundance---\n')
+    call('mkdir '+args.outdir+'/feature',args.outdir+'/feature/ created.','Error: fail to create '+args.outdir+'/feature/.')
+    for i in os.listdir(args.outdir+'/demultiplexed'):
+        if i[-9:]=='demux.qza':
+            denoise(args.outdir+'/demultiplexed/'+i,args.outdir+'/feature',q=args.qual,p=args.proc)
+    readProfileDenoise(args.outdir+'/feature',args.outdir+'/readSummary/read_summary_denoise.tsv')
 
-# quality trimming, denoise, chrimeric, abundance
-print('\n---Quality trimming, denoise, chrimeric, abundance---\n')
-call('mkdir '+args.outdir+'/feature',args.outdir+'/feature/ created.','Error: fail to create '+args.outdir+'/feature/.')
-for i in os.listdir(args.outdir+'/demultiplexed'):
-    if i[-9:]=='demux.qza':
-        denoise(args.outdir+'/demultiplexed/'+i,args.outdir+'/feature',q=args.qual,p=args.proc)
-readProfileDenoise(args.outdir+'/feature',args.outdir+'/readSummary/read_summary_denoise.tsv')
+    # convert input feature tables to qza
+    print('\n---Converting input feature table data to qza---\n')
+    convertInFt(args.indir,args.outdir+'/feature')
 
 
-# convert input feature tables to qza
-print('\n---Converting input feature table data to qza---\n')
-convertInFt(args.indir,args.outdir+'/feature')
+    # merge feature tables and sequences of multiple projects
+    print('\n---Merging multiple projects---\n')
+    call('mkdir '+args.outdir+'/featureMerged',args.outdir+'/featureMerged created.','Error: fail to create '+args.outdir+'/featureMerged.')
+    mergeProjects(args.outdir+'/feature',args.outdir+'/featureMerged')
+    getFileFromZ(args.outdir+'/featureMerged/merged-table.qzv','sample-frequency-detail.csv',args.outdir+'/readSummary/read_summary_merged.tsv')
 
-
-# merge feature tables and sequences of multiple projects
-print('\n---Merging multiple projects---\n')
-call('mkdir '+args.outdir+'/featureMerged',args.outdir+'/featureMerged created.','Error: fail to create '+args.outdir+'/featureMerged.')
-mergeProjects(args.outdir+'/feature',args.outdir+'/featureMerged')
-getFileFromZ(args.outdir+'/featureMerged/merged-table.qzv','sample-frequency-detail.csv',args.outdir+'/readSummary/read_summary_merged.tsv')
-
+else: # OTU analysis
+    # join paired end reads
+    join_pe(args.outdir+'/demultiplexed', args.outdir+'/paired_end_joined')
+    # quality filtering
+    quality_filter(args.outdir+'/paired_end_joined', args.qual, args.outdir+'/quality_filter', args.outdir+'/readSummary/')
+    # OTU clustering
+    otu_clustering(args.outdir+'/quality_filter', args.iden, args.outdir+'/otu', args.proc)
+    call('mkdir %s/featureMerged; cp %s/otu/rep-seqs-dn.qza %s/featureMerged/merged-rep-seqs.qza; cp %s/otu/table-dn.qza %s/featureMerged/merged-table.qza' % (args.outdir, args.outdir, args.outdir, args.outdir, args.outdir))
+    otu_read_summary(args.outdir+'/featureMerged/merged-table.qza', args.outdir+'/readSummary/read_summary_merged.tsv')
 
 # merge metadata
 print('\n---Merging multiple metadata---\n')
