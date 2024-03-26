@@ -287,7 +287,7 @@ def denoise(inQza,outdir,q=20,p=10):
                 --i-demultiplexed-seqs '+inQza+'\
                 --p-trim-left '+str(trim[0])+' \
                 --p-trunc-len '+str(trim[1])+' \
-                --p-trunc-q '+str(q)+' \
+                --p-trunc-q 10 \
                 --p-n-threads '+str(p)+' \
                 --o-representative-sequences '+outdir+'/'+project+'-rep-seqs.qza \
                 --o-table '+outdir+'/'+project+'-table.qza \
@@ -304,12 +304,12 @@ def denoise(inQza,outdir,q=20,p=10):
                 --p-trunc-len-f '+str(trimF[1])+' \
                 --p-trim-left-r '+str(trimR[0])+' \
                 --p-trunc-len-r '+str(trimR[1])+' \
-                --p-trunc-q '+str(q)+' \
+                --p-trunc-q 10 \
                 --p-n-threads '+str(p)+' \
                 --o-representative-sequences '+outdir+'/'+project+'-rep-seqs.qza \
                 --o-table '+outdir+'/'+project+'-table.qza \
                 --o-denoising-stats '+outdir+'/'+project+'-stats.qza'\
-                ,'Abundance results saved in '+outdir+'.','Abundance summarization failed. Is there an overlap of forward and reverse reads after trimming?')
+                ,'Abundance results saved in '+outdir+'.','Abundance summarization failed.')
     else:
         print('Error: Unknown demultiplexed data input.')
         sys.exit(1)
@@ -465,7 +465,11 @@ def resampleDepth(infile,resa):
     if resa != 0:
         print('Using user specified resampling depth '+str(resa)+'.\n# sample left: '+str((np.array(r) > resa).sum())+'\n')
         return(resa)
-
+    m = 3000
+    l = (np.array(r) > np.min(r)).sum()
+    if np.min(r) > m:
+        print(f'The minimum read number is over {m}. Using the minimum as the resampling depth.\nSample left: {l}')
+        return(np.min(r))
     s=list(range(1,len(r)+1))
     s=s[::-1]
     h=round(len(r)/2)
