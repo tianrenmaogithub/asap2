@@ -89,7 +89,8 @@ if args.meth == 'ASV':
     print('\n---Merging multiple projects---\n')
     call('mkdir '+args.outdir+'/featureMerged',args.outdir+'/featureMerged created.','Error: fail to create '+args.outdir+'/featureMerged.')
     mergeProjects(args.outdir+'/feature',args.outdir+'/featureMerged')
-    getFileFromZ(args.outdir+'/featureMerged/merged-table.qzv','sample-frequency-detail.csv',args.outdir+'/readSummary/read_summary_merged.tsv')
+    #getFileFromZ(args.outdir+'/featureMerged/merged-table.qzv','sample-frequency-detail.csv',args.outdir+'/readSummary/read_summary_merged.tsv')
+    readsPerSample(args.outdir+'/featureMerged/merged-table.tsv', args.outdir+'/readSummary/read_summary_merged.tsv')
 
 else: # OTU analysis
     # join paired end reads
