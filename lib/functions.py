@@ -455,6 +455,10 @@ def getFileFromZ(zipFile,target,out):
     f=[i for i in z.filelist if i.filename.split('/')[-1]==target]
     open(out,'w').write(z.read(f[0]).decode())
 
+def readsPerSample(infile, outfile):
+    df = pd.read_csv(infile, sep='\t', header=0, index_col=0, skiprows=1)
+    df.sum().to_csv(outfile, sep=',')
+
 def resampleDepth(infile,resa):
     # This function return resampling depth yielding the maximum observation
     print('Estimating the optimal resampling depth yielding the maximum observation (# samples and # features)')
