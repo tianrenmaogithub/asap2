@@ -11,7 +11,7 @@ parser.add_argument('-i','--inputdir',dest='indir',required=True,help='Directory
 parser.add_argument('-c',dest='clas',required=True,help='Classifier model for taxonomic classification. Download classifier models from https://docs.qiime2.org/2020.11/data-resources/ and put them in '+home+'/../lib/classifier/ if you haven\'t done it.',choices=os.listdir(home+'/../lib/classifier/'))
 parser.add_argument('-q','--qual',dest='qual',required=False,default=20,type=int,help='Quality score cutoff in determining the good region of sequence before denoising, 10-40. If too many reads filtered in denoising, use a higher quality score like 25 [default: 20].')
 parser.add_argument('-m','--method',dest='meth',required=False,default='ASV',choices=['ASV', 'OTU'],help='Method of sequence clustering [default: ASV].')
-parser.add_argument('-id','--identity',dest='iden',required=False,default=0.97,type=int,help='Identity cutoff for clustering if OTU clustering is selected [default: 0.97]')
+parser.add_argument('-id','--identity',dest='iden',required=False,default=0.97,type=float,help='Identity cutoff for clustering if OTU clustering is selected [default: 0.97]')
 parser.add_argument('-g','--gap',dest='gap',required=False,default=0.2,type=float,help='Maximum percent of gap in a column in the alignment filtering for phylogenetic tree construction, 0-1 [default: 0.2].')
 parser.add_argument('-r','--resampling-depth',dest='resa',required=False,default=0,type=int,help='Resampling depth. Make it 0 if you want the pipeline to decide it [default: 0].')
 parser.add_argument('-s','--step',dest='step',required=False,default=30,type=int,help='Step number for alpha rarefaction curve, 10-100 [default: 30].')
