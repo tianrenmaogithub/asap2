@@ -1,4 +1,4 @@
-Update: We have developed a Galaxy web server for users to analyze their data. Please visit http://hts.iit.edu/galaxy
+Update: We have developed a Galaxy web server for users to analyze their data. Please visit http://hts.iit.edu/galaxy and find HTS Initiative in the tools panel, or just visit http://hts.iit.edu/galaxy/?tool_id=asap2&version=latest
 
 We developed Amplicon Sequence Analysis Pipeline 2 (ASAP 2) to analyze marker gene amplicon sequence data automatically and consistently. It was designed to be user-friendly and time-saving. Users just need to organize their fastq (demultiplexed or multiplexed, barcode inside or outside, single-end or pair-end) or and metadata properly. Multiple projects can be put together and the pipeline will automatically merge the data. People can even put their own data and data from collaborators or NCBI together to compare. Also, if you have intermediate files (feature table and representative sequence) from collaborators and you don't want to repeat the previous steps, just start from them.
 
